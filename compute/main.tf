@@ -17,23 +17,23 @@ data "aws_ami" "linux" {
 }
 
 resource "aws_launch_template" "project_bastion" {
-  name_prefix            = "project_bastion"
+  name_prefix            = "benevity_test_project_bastion"
   image_id               = data.aws_ami.linux.id
   instance_type          = var.bastion_instance_type
   vpc_security_group_ids = [var.public_sg]
   key_name               = var.key_name
 
   tags = {
-    Name = "project_bastion"
+    Name = "benevity_test_project_bastion"
   }
 }
 
 resource "aws_autoscaling_group" "project_bastion" {
-  name                = "project_bastion"
+  name                = "benevity_test_project_bastion"
   vpc_zone_identifier = tolist(var.public_subnet)
-  min_size            = 1
-  max_size            = 1
-  desired_capacity    = 1
+  min_size            = 2
+  max_size            = 2
+  desired_capacity    = 2
 
   launch_template {
     id      = aws_launch_template.project_bastion.id
@@ -42,7 +42,7 @@ resource "aws_autoscaling_group" "project_bastion" {
 }
 
 resource "aws_launch_template" "project_database" {
-  name_prefix            = "project_database"
+  name_prefix            = "benevity_test_project_database"
   image_id               = data.aws_ami.linux.id
   instance_type          = var.database_instance_type
   vpc_security_group_ids = [var.private_sg]
@@ -50,12 +50,12 @@ resource "aws_launch_template" "project_database" {
   user_data              = filebase64("install_apache.sh")
 
   tags = {
-    Name = "project_database"
+    Name = "benevity_test_project_database"
   }
 }
 
 resource "aws_autoscaling_group" "project_database" {
-  name                = "project_database"
+  name                = "benevity_test_project_database"
   vpc_zone_identifier = tolist(var.public_subnet)
   min_size            = 2
   max_size            = 3
